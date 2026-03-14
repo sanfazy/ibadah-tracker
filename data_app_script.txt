@@ -1,15 +1,10 @@
-<<<<<<< HEAD
 ID Penerapan
 AKfycbyJws3f5afcgbSxD-KS0puxQFf-qUVl-bKKUQPf0YXztpI3Jz8xm9xSemSyFCpfoQiS
 
 URL
 https://script.google.com/macros/s/AKfycbyJws3f5afcgbSxD-KS0puxQFf-qUVl-bKKUQPf0YXztpI3Jz8xm9xSemSyFCpfoQiS/exec
 
-=======
-ID Penerapan
-AKfycbyJws3f5afcgbSxD-KS0puxQFf-qUVl-bKKUQPf0YXztpI3Jz8xm9xSemSyFCpfoQiS
-
-URL
-https://script.google.com/macros/s/AKfycbyJws3f5afcgbSxD-KS0puxQFf-qUVl-bKKUQPf0YXztpI3Jz8xm9xSemSyFCpfoQiS/exec
-
->>>>>>> 4e7a9e2e45fc8cb73049eda8e2823edbdad1568c
+Git
+git add .
+git commit -m "update fitur"
+git push
