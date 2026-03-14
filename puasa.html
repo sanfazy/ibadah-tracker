@@ -7,6 +7,8 @@
    </head>
    
    <body>
+      <h2>Input Hutang Puasa</h2>
+
       Tanggal
       <input type="date" id="tanggal">
 
@@ -14,5 +16,15 @@
       <input type="text" id="ket">
 
       <button onclick="simpan()">Simpan</button>
+
+      <script>
+         await apiPost({
+
+            action:"tambahPuasa",
+            tanggal:tanggal,
+            ket:ket
+
+         });
+      </script>
    </body>
 </html>

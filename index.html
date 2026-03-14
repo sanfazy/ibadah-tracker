@@ -16,7 +16,39 @@
       <div id="list"></div>
 
       <script src="config.js"></script>
-      <script src="app.js"></script>
+      <!-- <script src="app.js"></script> -->
+
+      <script>
+         async function loadDashboard(){
+
+         const data = await apiGet("listHutang");
+
+         let html="";
+
+         data.forEach(d=>{
+
+            html += `
+               <div class="card">
+
+               <b>${d.tanggal_hutang}</b><br>
+
+               ${d.waktu}<br>
+
+               ${d.keterangan}<br>
+
+               <button onclick="qadha(${d.id})">
+                  Qadha
+               </button>
+
+               </div>
+            `;
+
+         });
+
+         document.getElementById("list").innerHTML = html;
+
+         }
+      </script>
 
    </body>
 </html>

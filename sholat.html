@@ -7,18 +7,57 @@
    </head>
 
    <body>
+      <h2>Input Hutang Sholat</h2>
+
       Tanggal
       <input type="date" id="tanggal">
 
-      <label><input type="checkbox" id="subuh">Subuh</label>
-      <label><input type="checkbox" id="dzuhur">Dzuhur</label>
-      <label><input type="checkbox" id="ashar">Ashar</label>
-      <label><input type="checkbox" id="maghrib">Maghrib</label>
-      <label><input type="checkbox" id="isya">Isya</label>
+      Subuh
+      <input type="checkbox" id="subuh">
+
+      Dzuhur
+      <input type="checkbox" id="dzuhur">
+
+      Ashar
+      <input type="checkbox" id="ashar">
+
+      Maghrib
+      <input type="checkbox" id="maghrib">
+
+      Isya
+      <input type="checkbox" id="isya">
 
       Keterangan
       <input type="text" id="ket">
 
       <button onclick="simpan()">Simpan</button>
+
+      <script>
+         async function simpan(){
+
+            const tanggal = val("tanggal");
+            const ket = val("ket");
+
+            let waktu = [];
+
+            if(id("subuh").checked) waktu.push("subuh");
+            if(id("dzuhur").checked) waktu.push("dzuhur");
+            if(id("ashar").checked) waktu.push("ashar");
+            if(id("maghrib").checked) waktu.push("maghrib");
+            if(id("isya").checked) waktu.push("isya");
+
+            await apiPost({
+
+            action:"tambahSholat",
+            tanggal:tanggal,
+            waktu:waktu,
+            ket:ket
+
+            });
+
+            alert("tersimpan");
+
+         }
+      </script>
    </body>
 </html>
