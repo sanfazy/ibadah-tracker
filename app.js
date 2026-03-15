@@ -55,6 +55,9 @@ function trackerApp() {
     async apiPost(data) {
       await fetch(API, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       });
     },
@@ -110,6 +113,11 @@ function trackerApp() {
         nama: this.formSholat.nama,
       });
 
+      this.formSholat = {
+        tanggal: "",
+        nama: "Subuh",
+      };
+
       this.openSholat = false;
       this.loadData();
     },
@@ -121,6 +129,11 @@ function trackerApp() {
         tanggal: this.formPuasa.tanggal,
         nama: this.formPuasa.nama,
       });
+
+      this.formPuasa = {
+        tanggal: "",
+        nama: "",
+      };
 
       this.openPuasa = false;
       this.loadData();

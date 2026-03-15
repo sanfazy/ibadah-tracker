@@ -135,7 +135,10 @@
         <h2 class="font-semibold">Riwayat Qadha</h2>
 
         <ul class="bg-white rounded-xl shadow p-4 space-y-2">
-          <template x-for="item in sholatSudah" :key="item.id">
+          <template
+            x-for="item in [...sholatSudah,...puasaSudah]"
+            :key="item.id"
+          >
             <li class="flex justify-between">
               <span x-text="item.nama"></span>
 
@@ -183,7 +186,7 @@
         </div>
       </div>
 
-      <!-- MODALS -->
+      <!-- MODALS SHOLAT -->
       <template x-if="openSholat">
         <div
           class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center"
@@ -210,6 +213,79 @@
               class="w-full bg-green-600 text-white p-2 rounded"
             >
               Simpan
+            </button>
+            <button
+              @click="openSholat=false; openMenu=true"
+              class="w-full text-gray-500"
+            >
+              Batal
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <!-- MODALS PUASA -->
+      <template x-if="openPuasa">
+        <div
+          class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center"
+        >
+          <div class="bg-white p-4 rounded-xl w-80 space-y-3">
+            <h2 class="font-semibold">Input Hutang Puasa</h2>
+
+            <input
+              type="text"
+              x-model="formPuasa.nama"
+              class="w-full border p-2 rounded"
+            />
+
+            <input
+              type="date"
+              x-model="formPuasa.tanggal"
+              class="w-full border p-2 rounded"
+            />
+
+            <button
+              @click="savePuasa()"
+              class="w-full bg-green-600 text-white p-2 rounded"
+            >
+              Simpan
+            </button>
+            <button
+              @click="openPuasa=false; openMenu=true"
+              class="w-full text-gray-500"
+            >
+              Batal
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <!-- MODAL QODO -->
+      <template x-if="openModalQodo">
+        <div
+          class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center"
+        >
+          <div class="bg-white p-4 rounded-xl w-80 space-y-3">
+            <h2 class="font-semibold">Input Tanggal Qadha</h2>
+
+            <input
+              type="date"
+              x-model="formQodo.tanggal_qodo"
+              class="w-full border p-2 rounded"
+            />
+
+            <button
+              @click="saveQodo()"
+              class="w-full bg-green-600 text-white p-2 rounded"
+            >
+              Simpan
+            </button>
+
+            <button
+              @click="openModalQodo=false; openMenu=true"
+              class="w-full text-gray-500"
+            >
+              Batal
             </button>
           </div>
         </div>
