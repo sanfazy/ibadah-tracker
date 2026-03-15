@@ -17,6 +17,9 @@ puasaList:[],
 hutangSholat:0,
 hutangPuasa:0,
 
+tahunFilter:"",
+tahunList:[],
+
 formSholat:{
 tanggal:"",
 nama:"Subuh"
@@ -34,15 +37,35 @@ tanggal_qodo:""
 },
 
 get sholatBelum(){
-return this.sholatList.filter(i => i[4]=='')
+
+return this.sholatList.filter(i => 
+i[4]=='' && i[3]==this.tahunFilter
+)
+
 },
 
 get puasaBelum(){
-return this.puasaList.filter(i => i[4]=='')
+
+return this.puasaList.filter(i => 
+i[4]=='' && i[3]==this.tahunFilter
+)
+
 },
 
 get sholatSudah(){
-return this.sholatList.filter(i => i[4] != '')
+
+return this.sholatList.filter(i => 
+i[4] != '' && i[3]==this.tahunFilter
+)
+
+},
+
+get puasaSudah(){
+
+return this.puasaList.filter(i => 
+i[4] != '' && i[3]==this.tahunFilter
+)
+
 },
 
 async loadData(){
@@ -53,8 +76,9 @@ let p = await fetch(API_URL+"?type=puasa")
 this.sholatList = await s.json()
 this.puasaList = await p.json()
 
-this.hutangSholat = this.sholatBelum.length
-this.hutangPuasa = this.puasaBelum.length
+this.generateTahun()
+
+this.hitungStat()
 
 },
 
@@ -116,7 +140,42 @@ tanggal_qodo:this.formQodo.tanggal_qodo
 this.openModalQodo=false
 this.loadData()
 
+},
+
+generateTahun(){
+
+let tahun = []
+
+this.sholatList.forEach(i=>{
+if(i[3]) tahun.push(i[3])
+})
+
+this.puasaList.forEach(i=>{
+if(i[3]) tahun.push(i[3])
+})
+
+tahun = [...new Set(tahun)]
+
+tahun.sort((a,b)=>b-a)
+
+this.tahunList = tahun
+
+if(!this.tahunFilter){
+this.tahunFilter = tahun[0]
 }
+
+},
+
+hitungStat(){
+
+this.hutangSholat = this.sholatBelum.length
+this.hutangPuasa = this.puasaBelum.length
+
+},
+
+$watch('tahunFilter', () => {
+this.hitungStat()
+})
 
 }
 

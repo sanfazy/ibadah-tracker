@@ -46,6 +46,24 @@ Riwayat
 </div>
 
 
+<div class="bg-white p-3 rounded-xl shadow">
+
+<label class="text-xs text-gray-500">Filter Tahun</label>
+
+<select
+x-model="tahunFilter"
+class="w-full mt-1 border rounded p-2">
+
+<template x-for="t in tahunList">
+
+<option :value="t" x-text="t"></option>
+
+</template>
+
+</select>
+
+</div>
+
 
 <!-- DASHBOARD -->
 <div x-show="menu=='dashboard'" class="p-4 space-y-4 pb-24">
