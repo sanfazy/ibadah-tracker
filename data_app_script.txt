@@ -1,10 +1,11 @@
 ID Penerapan
-AKfycbyJws3f5afcgbSxD-KS0puxQFf-qUVl-bKKUQPf0YXztpI3Jz8xm9xSemSyFCpfoQiS
+AKfycbwmcChsjM6Vpd81RIVjVf2SeGToOISe7ciHQlt0VA_xoyVpreQGkJ8sLTdEomTuk2-H
 
 URL
-https://script.google.com/macros/s/AKfycbyJws3f5afcgbSxD-KS0puxQFf-qUVl-bKKUQPf0YXztpI3Jz8xm9xSemSyFCpfoQiS/exec
+https://script.google.com/macros/s/AKfycbwmcChsjM6Vpd81RIVjVf2SeGToOISe7ciHQlt0VA_xoyVpreQGkJ8sLTdEomTuk2-H/exec
 
 Git
 git add .
 git commit -m "update fitur"
 git push
+
