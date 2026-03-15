@@ -3,7 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Ibadah Tracker</title>
 
@@ -17,57 +17,99 @@
 <div x-data="trackerApp()" x-init="loadData()" class="max-w-md mx-auto min-h-screen bg-gray-50">
 
 <!-- HEADER -->
-<div class="bg-green-600 text-white p-4 text-center font-bold text-lg">
+<div class="bg-green-600 text-white p-4 text-center font-bold text-lg shadow">
 Ibadah Tracker
 </div>
 
 
-<!-- DASHBOARD -->
-<div class="p-4 space-y-4 pb-24">
+<!-- TAB MENU -->
+<div class="flex bg-white shadow text-sm">
 
-<!-- FILTER -->
-<div>
-<label class="text-sm font-semibold">Filter Tahun</label>
+<button
+@click="menu='dashboard'"
+:class="menu=='dashboard' ? 'text-green-600 border-b-2 border-green-600' : ''"
+class="flex-1 p-3">
 
-<select x-model="tahunFilter"
-@change="loadData()"
-class="w-full mt-1 p-2 rounded border">
+Dashboard
 
-<option>2026</option>
-<option>2025</option>
+</button>
 
-</select>
+<button
+@click="menu='riwayat'"
+:class="menu=='riwayat' ? 'text-green-600 border-b-2 border-green-600' : ''"
+class="flex-1 p-3">
+
+Riwayat
+
+</button>
+
 </div>
 
 
-<!-- STATISTIK -->
+
+<!-- DASHBOARD -->
+<div x-show="menu=='dashboard'" class="p-4 space-y-4 pb-24">
+
+<!-- STAT -->
 <div class="grid grid-cols-2 gap-3">
 
 <div class="bg-white p-3 rounded-xl shadow text-center">
-<p class="text-xs text-gray-500">Hutang Sholat</p>
-<p class="text-xl font-bold text-green-600" x-text="totalSholat"></p>
+
+<p class="text-xs text-gray-500">
+Hutang Sholat
+</p>
+
+<p class="text-xl font-bold text-green-600"
+x-text="hutangSholat"></p>
+
 </div>
+
 
 <div class="bg-white p-3 rounded-xl shadow text-center">
-<p class="text-xs text-gray-500">Hutang Puasa</p>
-<p class="text-xl font-bold text-green-600" x-text="totalPuasa"></p>
-</div>
+
+<p class="text-xs text-gray-500">
+Hutang Puasa
+</p>
+
+<p class="text-xl font-bold text-green-600"
+x-text="hutangPuasa"></p>
 
 </div>
 
+</div>
 
-<!-- LIST SHOLAT -->
-<div class="bg-white p-4 rounded-xl shadow">
 
-<h2 class="font-semibold mb-2">Hutang Sholat</h2>
 
-<ul class="text-sm space-y-1">
+<!-- HUTANG SHOLAT -->
+<div class="bg-white rounded-xl shadow p-4">
 
-<template x-for="item in sholatList">
+<h2 class="font-semibold mb-2">
+Hutang Sholat
+</h2>
 
-<li class="flex justify-between">
-<span x-text="item[2]"></span>
-<span x-text="item[1]"></span>
+<ul class="space-y-2">
+
+<template x-for="item in sholatBelum">
+
+<li class="flex justify-between items-center">
+
+<div>
+
+<p x-text="item[2]"></p>
+
+<p class="text-xs text-gray-400"
+x-text="item[1]"></p>
+
+</div>
+
+<button
+@click="openQodo(item,'sholat')"
+class="text-green-600 text-sm">
+
+Qadha
+
+</button>
+
 </li>
 
 </template>
@@ -78,18 +120,36 @@ class="w-full mt-1 p-2 rounded border">
 
 
 
-<!-- LIST PUASA -->
-<div class="bg-white p-4 rounded-xl shadow">
+<!-- HUTANG PUASA -->
+<div class="bg-white rounded-xl shadow p-4">
 
-<h2 class="font-semibold mb-2">Hutang Puasa</h2>
+<h2 class="font-semibold mb-2">
+Hutang Puasa
+</h2>
 
-<ul class="text-sm space-y-1">
+<ul class="space-y-2">
 
-<template x-for="item in puasaList">
+<template x-for="item in puasaBelum">
 
-<li class="flex justify-between">
-<span x-text="item[1]"></span>
-<span x-text="item[2]"></span>
+<li class="flex justify-between items-center">
+
+<div>
+
+<p x-text="item[1]"></p>
+
+<p class="text-xs text-gray-400"
+x-text="item[2]"></p>
+
+</div>
+
+<button
+@click="openQodo(item,'puasa')"
+class="text-green-600 text-sm">
+
+Qadha
+
+</button>
+
 </li>
 
 </template>
@@ -102,35 +162,92 @@ class="w-full mt-1 p-2 rounded border">
 
 
 
-<!-- NAVIGATION -->
-<div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t flex">
+<!-- RIWAYAT -->
+<div x-show="menu=='riwayat'" class="p-4 space-y-4 pb-24">
+
+<h2 class="font-semibold">
+Riwayat Qadha
+</h2>
+
+<ul class="bg-white rounded-xl shadow p-4 space-y-2">
+
+<template x-for="item in sholatSudah">
+
+<li class="flex justify-between">
+
+<span x-text="item[2]"></span>
+
+<span class="text-green-600 text-sm"
+x-text="item[4]"></span>
+
+</li>
+
+</template>
+
+</ul>
+
+</div>
+
+
+
+<!-- FLOATING BUTTON -->
+<button
+@click="openMenu=true"
+class="fixed bottom-6 right-6 bg-green-600 text-white w-14 h-14 rounded-full text-2xl shadow">
+
++
+
+</button>
+
+
+
+<!-- MENU ACTION -->
+<div
+x-show="openMenu"
+class="fixed inset-0 bg-black bg-opacity-40 flex items-end justify-center">
+
+<div class="bg-white w-full max-w-md p-4 rounded-t-xl space-y-2">
 
 <button
-@click="openSholat=true"
-class="flex-1 p-3 text-sm">
-Input Sholat
+@click="openSholat=true; openMenu=false"
+class="w-full bg-green-600 text-white p-3 rounded">
+
+Tambah Hutang Sholat
+
 </button>
 
 <button
-@click="openPuasa=true"
-class="flex-1 p-3 text-sm">
-Input Puasa
+@click="openPuasa=true; openMenu=false"
+class="w-full bg-green-600 text-white p-3 rounded">
+
+Tambah Hutang Puasa
+
 </button>
+
+<button
+@click="openMenu=false"
+class="w-full text-gray-500">
+
+Batal
+
+</button>
+
+</div>
 
 </div>
 
 
 
 <!-- MODAL SHOLAT -->
-<div
-x-show="openSholat"
+<div x-show="openSholat"
 class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
 
-<div class="bg-white w-80 rounded-xl p-4 space-y-3">
+<div class="bg-white p-4 rounded-xl w-80 space-y-3">
 
 <h2 class="font-semibold">Input Hutang Sholat</h2>
 
-<select x-model="formSholat.nama" class="w-full border p-2 rounded">
+<select x-model="formSholat.nama"
+class="w-full border p-2 rounded">
 
 <option>Subuh</option>
 <option>Dzuhur</option>
@@ -140,18 +257,16 @@ class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
 
 </select>
 
-<input type="date" x-model="formSholat.tanggal" class="w-full border p-2 rounded">
+<input type="date"
+x-model="formSholat.tanggal"
+class="w-full border p-2 rounded">
 
 <button
 @click="saveSholat()"
 class="w-full bg-green-600 text-white p-2 rounded">
-Simpan
-</button>
 
-<button
-@click="openSholat=false"
-class="w-full text-gray-500 text-sm">
-Batal
+Simpan
+
 </button>
 
 </div>
@@ -161,30 +276,56 @@ Batal
 
 
 <!-- MODAL PUASA -->
-<div
-x-show="openPuasa"
+<div x-show="openPuasa"
 class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
 
-<div class="bg-white w-80 rounded-xl p-4 space-y-3">
+<div class="bg-white p-4 rounded-xl w-80 space-y-3">
 
 <h2 class="font-semibold">Input Hutang Puasa</h2>
 
-<input type="date" x-model="formPuasa.tanggal" class="w-full border p-2 rounded">
+<input type="date"
+x-model="formPuasa.tanggal"
+class="w-full border p-2 rounded">
 
-<input type="text" placeholder="Keterangan"
+<input type="text"
+placeholder="Keterangan"
 x-model="formPuasa.nama"
 class="w-full border p-2 rounded">
 
 <button
 @click="savePuasa()"
 class="w-full bg-green-600 text-white p-2 rounded">
+
 Simpan
+
 </button>
+
+</div>
+
+</div>
+
+
+
+<!-- MODAL QODHO -->
+<div x-show="openModalQodo"
+class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+
+<div class="bg-white p-4 rounded-xl w-80 space-y-3">
+
+<h2 class="font-semibold">
+Tanggal Qadha
+</h2>
+
+<input type="date"
+x-model="formQodo.tanggal_qodo"
+class="w-full border p-2 rounded">
 
 <button
-@click="openPuasa=false"
-class="w-full text-gray-500 text-sm">
-Batal
+@click="saveQodo()"
+class="w-full bg-green-600 text-white p-2 rounded">
+
+Simpan
+
 </button>
 
 </div>
@@ -192,9 +333,10 @@ Batal
 </div>
 
 
+
 </div>
 
-<script src="js/app.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
