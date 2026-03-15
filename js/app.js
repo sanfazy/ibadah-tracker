@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwmcChsjM6Vpd81RIVjVf2SeGToOISe7ciHQlt0VA_xoyVpreQGkJ8sLTdEomTuk2-H/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzRwpT0EN4vAezG8qVhKXSaLsjskC_P6wy85xf9gYi89neuv6z7PNrUkyAcIQOCPkTyLA/exec";
 
 function trackerApp(){
 
