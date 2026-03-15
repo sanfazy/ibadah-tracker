@@ -1,193 +1,170 @@
-const API = "https://script.google.com/macros/s/AKfycbzRwpT0EN4vAezG8qVhKXSaLsjskC_P6wy85xf9gYi89neuv6z7PNrUkyAcIQOCPkTyLA/exec";
+const API =
+  "https://script.google.com/macros/s/AKfycbzRwpT0EN4vAezG8qVhKXSaLsjskC_P6wy85xf9gYi89neuv6z7PNrUkyAcIQOCPkTyLA/exec";
 
-function trackerApp(){
+function trackerApp() {
+  return {
+    menu: "dashboard",
 
-return{
+    openMenu: false,
+    openSholat: false,
+    openPuasa: false,
+    openModalQodo: false,
 
-menu:"dashboard",
+    activeTab: "text-green-600 border-b-2 border-green-600",
 
-openMenu:false,
-openSholat:false,
-openPuasa:false,
-openModalQodo:false,
+    sholat: [],
+    puasa: [],
 
-activeTab:"text-green-600 border-b-2 border-green-600",
+    tahunList: [],
+    tahunFilter: "",
 
-sholat:[],
-puasa:[],
+    hutangSholat: 0,
+    hutangPuasa: 0,
 
-tahunList:[],
-tahunFilter:"",
+    formSholat: {
+      tanggal: "",
+      nama: "Subuh",
+    },
 
-hutangSholat:0,
-hutangPuasa:0,
+    formPuasa: {
+      tanggal: "",
+      nama: "",
+    },
 
-formSholat:{
-tanggal:"",
-nama:"Subuh"
-},
+    formQodo: {
+      id: "",
+      type: "",
+      tanggal_qodo: "",
+    },
 
-formPuasa:{
-tanggal:"",
-nama:""
-},
+    init() {
+      this.loadData();
 
-formQodo:{
-id:"",
-type:"",
-tanggal_qodo:""
-},
+      this.$watch("tahunFilter", () => {
+        this.hitungStat();
+      });
+    },
 
-init(){
+    /* API */
 
-this.loadData()
+    async apiGet(type) {
+      const res = await fetch(`${API}?type=${type}`);
+      return res.json();
+    },
 
-this.$watch('tahunFilter',()=>{
-this.hitungStat()
-})
+    async apiPost(data) {
+      await fetch(API, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
 
-},
+    /* LOAD DATA */
 
-/* API */
+    async loadData() {
+      const [sholat, puasa] = await Promise.all([
+        this.apiGet("sholat"),
+        this.apiGet("puasa"),
+      ]);
 
-async apiGet(type){
+      this.sholat = sholat;
+      this.puasa = puasa;
 
-const res = await fetch(`${API}?type=${type}`)
-return res.json()
+      this.generateTahun();
+      this.hitungStat();
+    },
 
-},
+    /* COMPUTED */
 
-async apiPost(data){
+    get sholatBelum() {
+      return this.sholat.filter(
+        (i) => !i.tanggal_qodo && i.tahun == this.tahunFilter,
+      );
+    },
 
-await fetch(API,{
-method:"POST",
-body:JSON.stringify(data)
-})
+    get puasaBelum() {
+      return this.puasa.filter(
+        (i) => !i.tanggal_qodo && i.tahun == this.tahunFilter,
+      );
+    },
 
-},
+    get sholatSudah() {
+      return this.sholat.filter(
+        (i) => i.tanggal_qodo && i.tahun == this.tahunFilter,
+      );
+    },
 
-/* LOAD DATA */
+    get puasaSudah() {
+      return this.puasa.filter(
+        (i) => i.tanggal_qodo && i.tahun == this.tahunFilter,
+      );
+    },
 
-async loadData(){
+    /* ACTION */
 
-const [sholat,puasa] = await Promise.all([
-this.apiGet("sholat"),
-this.apiGet("puasa")
-])
+    async saveSholat() {
+      await this.apiPost({
+        action: "add",
+        type: "sholat",
+        tanggal: this.formSholat.tanggal,
+        nama: this.formSholat.nama,
+      });
 
-this.sholat = sholat
-this.puasa = puasa
+      this.openSholat = false;
+      this.loadData();
+    },
 
-this.generateTahun()
-this.hitungStat()
+    async savePuasa() {
+      await this.apiPost({
+        action: "add",
+        type: "puasa",
+        tanggal: this.formPuasa.tanggal,
+        nama: this.formPuasa.nama,
+      });
 
-},
+      this.openPuasa = false;
+      this.loadData();
+    },
 
-/* COMPUTED */
+    openQodo(item, type) {
+      this.formQodo.id = item.id;
+      this.formQodo.type = type;
 
-get sholatBelum(){
-return this.sholat.filter(i =>
-!i.tanggal_qodo && i.tahun==this.tahunFilter
-)
-},
+      this.openModalQodo = true;
+    },
 
-get puasaBelum(){
-return this.puasa.filter(i =>
-!i.tanggal_qodo && i.tahun==this.tahunFilter
-)
-},
+    async saveQodo() {
+      await this.apiPost({
+        action: "qodo",
+        type: this.formQodo.type,
+        id: this.formQodo.id,
+        tanggal_qodo: this.formQodo.tanggal_qodo,
+      });
 
-get sholatSudah(){
-return this.sholat.filter(i =>
-i.tanggal_qodo && i.tahun==this.tahunFilter
-)
-},
+      this.openModalQodo = false;
+      this.loadData();
+    },
 
-get puasaSudah(){
-return this.puasa.filter(i =>
-i.tanggal_qodo && i.tahun==this.tahunFilter
-)
-},
+    /* UTIL */
 
-/* ACTION */
+    generateTahun() {
+      let tahun = [
+        ...this.sholat.map((i) => i.tahun),
+        ...this.puasa.map((i) => i.tahun),
+      ];
 
-async saveSholat(){
+      tahun = [...new Set(tahun)].sort((a, b) => b - a);
 
-await this.apiPost({
-action:"add",
-type:"sholat",
-tanggal:this.formSholat.tanggal,
-nama:this.formSholat.nama
-})
+      this.tahunList = tahun;
 
-this.openSholat=false
-this.loadData()
+      if (!this.tahunFilter) {
+        this.tahunFilter = tahun[0];
+      }
+    },
 
-},
-
-async savePuasa(){
-
-await this.apiPost({
-action:"add",
-type:"puasa",
-tanggal:this.formPuasa.tanggal,
-nama:this.formPuasa.nama
-})
-
-this.openPuasa=false
-this.loadData()
-
-},
-
-openQodo(item,type){
-
-this.formQodo.id=item.id
-this.formQodo.type=type
-
-this.openModalQodo=true
-
-},
-
-async saveQodo(){
-
-await this.apiPost({
-action:"qodo",
-type:this.formQodo.type,
-id:this.formQodo.id,
-tanggal_qodo:this.formQodo.tanggal_qodo
-})
-
-this.openModalQodo=false
-this.loadData()
-
-},
-
-/* UTIL */
-
-generateTahun(){
-
-let tahun=[
-...this.sholat.map(i=>i.tahun),
-...this.puasa.map(i=>i.tahun)
-]
-
-tahun=[...new Set(tahun)].sort((a,b)=>b-a)
-
-this.tahunList=tahun
-
-if(!this.tahunFilter){
-this.tahunFilter=tahun[0]
-}
-
-},
-
-hitungStat(){
-
-this.hutangSholat=this.sholatBelum.length
-this.hutangPuasa=this.puasaBelum.length
-
-}
-
-}
-
+    hitungStat() {
+      this.hutangSholat = this.sholatBelum.length;
+      this.hutangPuasa = this.puasaBelum.length;
+    },
+  };
 }

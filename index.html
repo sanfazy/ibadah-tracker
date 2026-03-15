@@ -1,300 +1,221 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Ibadah Tracker</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-</head>
-
-<body class="bg-gray-100">
-
-<div 
-x-data="trackerApp()" 
-x-init="init()"
-class="max-w-md mx-auto min-h-screen bg-gray-50">
-
-<!-- HEADER -->
-<header class="bg-green-600 text-white p-4 text-center font-bold text-lg shadow">
-Ibadah Tracker
-</header>
-
-<!-- MENU -->
-<div class="flex bg-white shadow text-sm">
-
-<button
-@click="menu='dashboard'"
-:class="menu=='dashboard' ? activeTab : ''"
-class="flex-1 p-3">
-
-Dashboard
-
-</button>
-
-<button
-@click="menu='riwayat'"
-:class="menu=='riwayat' ? activeTab : ''"
-class="flex-1 p-3">
-
-Riwayat
-
-</button>
-
-</div>
-
-<!-- FILTER -->
-<div class="p-3">
-
-<div class="bg-white p-3 rounded-xl shadow">
-
-<label class="text-xs text-gray-500">
-Filter Tahun
-</label>
-
-<select
-x-model="tahunFilter"
-class="w-full mt-1 border rounded p-2">
-
-<template x-for="t in tahunList" :key="t">
-<option :value="t" x-text="t"></option>
-</template>
-
-</select>
-
-</div>
-
-</div>
-
-
-<!-- DASHBOARD -->
-<section 
-x-show="menu=='dashboard'" 
-class="px-3 pb-24 space-y-4">
-
-<!-- STAT -->
-<div class="grid grid-cols-2 gap-3">
-
-<div class="bg-white p-3 rounded-xl shadow text-center">
-
-<p class="text-xs text-gray-500">
-Hutang Sholat
-</p>
-
-<p class="text-xl font-bold text-green-600"
-x-text="hutangSholat"></p>
-
-</div>
-
-<div class="bg-white p-3 rounded-xl shadow text-center">
-
-<p class="text-xs text-gray-500">
-Hutang Puasa
-</p>
-
-<p class="text-xl font-bold text-green-600"
-x-text="hutangPuasa"></p>
-
-</div>
-
-</div>
-
-<!-- HUTANG SHOLAT -->
-<div class="bg-white rounded-xl shadow p-4">
-
-<h2 class="font-semibold mb-3">
-Hutang Sholat
-</h2>
-
-<ul class="space-y-2">
-
-<template x-for="item in sholatBelum" :key="item.id">
-
-<li class="flex justify-between items-center">
-
-<div>
-
-<p x-text="item.nama"></p>
-
-<p class="text-xs text-gray-400"
-x-text="item.tanggal"></p>
-
-</div>
-
-<button
-@click="openQodo(item,'sholat')"
-class="text-green-600 text-sm">
-
-Qadha
-
-</button>
-
-</li>
-
-</template>
-
-</ul>
-
-</div>
-
-
-<!-- HUTANG PUASA -->
-<div class="bg-white rounded-xl shadow p-4">
-
-<h2 class="font-semibold mb-3">
-Hutang Puasa
-</h2>
-
-<ul class="space-y-2">
-
-<template x-for="item in puasaBelum" :key="item.id">
-
-<li class="flex justify-between items-center">
-
-<div>
-
-<p x-text="item.tanggal"></p>
-
-<p class="text-xs text-gray-400"
-x-text="item.nama"></p>
-
-</div>
-
-<button
-@click="openQodo(item,'puasa')"
-class="text-green-600 text-sm">
-
-Qadha
-
-</button>
-
-</li>
-
-</template>
-
-</ul>
-
-</div>
-
-</section>
-
-
-<!-- RIWAYAT -->
-<section 
-x-show="menu=='riwayat'"
-class="px-3 pb-24 space-y-3">
-
-<h2 class="font-semibold">
-Riwayat Qadha
-</h2>
-
-<ul class="bg-white rounded-xl shadow p-4 space-y-2">
-
-<template x-for="item in sholatSudah" :key="item.id">
-
-<li class="flex justify-between">
-
-<span x-text="item.nama"></span>
-
-<span
-class="text-green-600 text-sm"
-x-text="item.tanggal_qodo"></span>
-
-</li>
-
-</template>
-
-</ul>
-
-</section>
-
-
-<!-- FLOAT BUTTON -->
-<button
-@click="openMenu=true"
-class="fixed bottom-6 right-6 bg-green-600 text-white w-14 h-14 rounded-full text-2xl shadow">
-
-+
-
-</button>
-
-
-<!-- ACTION MENU -->
-<div
-x-show="openMenu"
-x-transition
-class="fixed inset-0 bg-black bg-opacity-40 flex items-end justify-center">
-
-<div class="bg-white w-full max-w-md p-4 rounded-t-xl space-y-2">
-
-<button
-@click="openSholat=true; openMenu=false"
-class="w-full bg-green-600 text-white p-3 rounded">
-
-Tambah Hutang Sholat
-
-</button>
-
-<button
-@click="openPuasa=true; openMenu=false"
-class="w-full bg-green-600 text-white p-3 rounded">
-
-Tambah Hutang Puasa
-
-</button>
-
-<button
-@click="openMenu=false"
-class="w-full text-gray-500">
-
-Batal
-
-</button>
-
-</div>
-
-</div>
-
-<!-- MODALS -->
-<template x-if="openSholat">
-<div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-
-<div class="bg-white p-4 rounded-xl w-80 space-y-3">
-
-<h2 class="font-semibold">
-Input Hutang Sholat
-</h2>
-
-<select x-model="formSholat.nama" class="w-full border p-2 rounded">
-<option>Subuh</option>
-<option>Dzuhur</option>
-<option>Ashar</option>
-<option>Maghrib</option>
-<option>Isya</option>
-</select>
-
-<input type="date" x-model="formSholat.tanggal" class="w-full border p-2 rounded">
-
-<button
-@click="saveSholat()"
-class="w-full bg-green-600 text-white p-2 rounded">
-
-Simpan
-
-</button>
-
-</div>
-
-</div>
-</template>
-
-</div>
-
-<script src="app.js"></script>
-
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Ibadah Tracker</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+  </head>
+
+  <body class="bg-gray-100">
+    <div
+      x-data="trackerApp()"
+      x-init="init()"
+      class="max-w-md mx-auto min-h-screen bg-gray-50"
+    >
+      <!-- HEADER -->
+      <header
+        class="bg-green-600 text-white p-4 text-center font-bold text-lg shadow"
+      >
+        Ibadah Tracker
+      </header>
+
+      <!-- MENU -->
+      <div class="flex bg-white shadow text-sm">
+        <button
+          @click="menu='dashboard'"
+          :class="menu=='dashboard' ? activeTab : ''"
+          class="flex-1 p-3"
+        >
+          Dashboard
+        </button>
+
+        <button
+          @click="menu='riwayat'"
+          :class="menu=='riwayat' ? activeTab : ''"
+          class="flex-1 p-3"
+        >
+          Riwayat
+        </button>
+      </div>
+
+      <!-- FILTER -->
+      <div class="p-3">
+        <div class="bg-white p-3 rounded-xl shadow">
+          <label class="text-xs text-gray-500"> Filter Tahun </label>
+
+          <select x-model="tahunFilter" class="w-full mt-1 border rounded p-2">
+            <template x-for="t in tahunList" :key="t">
+              <option :value="t" x-text="t"></option>
+            </template>
+          </select>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <section x-show="menu=='dashboard'" class="px-3 pb-24 space-y-4">
+        <!-- STAT -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-white p-3 rounded-xl shadow text-center">
+            <p class="text-xs text-gray-500">Hutang Sholat</p>
+
+            <p
+              class="text-xl font-bold text-green-600"
+              x-text="hutangSholat"
+            ></p>
+          </div>
+
+          <div class="bg-white p-3 rounded-xl shadow text-center">
+            <p class="text-xs text-gray-500">Hutang Puasa</p>
+
+            <p
+              class="text-xl font-bold text-green-600"
+              x-text="hutangPuasa"
+            ></p>
+          </div>
+        </div>
+
+        <!-- HUTANG SHOLAT -->
+        <div class="bg-white rounded-xl shadow p-4">
+          <h2 class="font-semibold mb-3">Hutang Sholat</h2>
+
+          <ul class="space-y-2">
+            <template x-for="item in sholatBelum" :key="item.id">
+              <li class="flex justify-between items-center">
+                <div>
+                  <p x-text="item.nama"></p>
+
+                  <p class="text-xs text-gray-400" x-text="item.tanggal"></p>
+                </div>
+
+                <button
+                  @click="openQodo(item,'sholat')"
+                  class="text-green-600 text-sm"
+                >
+                  Qadha
+                </button>
+              </li>
+            </template>
+          </ul>
+        </div>
+
+        <!-- HUTANG PUASA -->
+        <div class="bg-white rounded-xl shadow p-4">
+          <h2 class="font-semibold mb-3">Hutang Puasa</h2>
+
+          <ul class="space-y-2">
+            <template x-for="item in puasaBelum" :key="item.id">
+              <li class="flex justify-between items-center">
+                <div>
+                  <p x-text="item.tanggal"></p>
+
+                  <p class="text-xs text-gray-400" x-text="item.nama"></p>
+                </div>
+
+                <button
+                  @click="openQodo(item,'puasa')"
+                  class="text-green-600 text-sm"
+                >
+                  Qadha
+                </button>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </section>
+
+      <!-- RIWAYAT -->
+      <section x-show="menu=='riwayat'" class="px-3 pb-24 space-y-3">
+        <h2 class="font-semibold">Riwayat Qadha</h2>
+
+        <ul class="bg-white rounded-xl shadow p-4 space-y-2">
+          <template x-for="item in sholatSudah" :key="item.id">
+            <li class="flex justify-between">
+              <span x-text="item.nama"></span>
+
+              <span
+                class="text-green-600 text-sm"
+                x-text="item.tanggal_qodo"
+              ></span>
+            </li>
+          </template>
+        </ul>
+      </section>
+
+      <!-- FLOAT BUTTON -->
+      <button
+        @click="openMenu=true"
+        class="fixed bottom-6 right-6 bg-green-600 text-white w-14 h-14 rounded-full text-2xl shadow"
+      >
+        +
+      </button>
+
+      <!-- ACTION MENU -->
+      <div
+        x-show="openMenu"
+        x-transition
+        class="fixed inset-0 bg-black bg-opacity-40 flex items-end justify-center"
+      >
+        <div class="bg-white w-full max-w-md p-4 rounded-t-xl space-y-2">
+          <button
+            @click="openSholat=true; openMenu=false"
+            class="w-full bg-green-600 text-white p-3 rounded"
+          >
+            Tambah Hutang Sholat
+          </button>
+
+          <button
+            @click="openPuasa=true; openMenu=false"
+            class="w-full bg-green-600 text-white p-3 rounded"
+          >
+            Tambah Hutang Puasa
+          </button>
+
+          <button @click="openMenu=false" class="w-full text-gray-500">
+            Batal
+          </button>
+        </div>
+      </div>
+
+      <!-- MODALS -->
+      <template x-if="openSholat">
+        <div
+          class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center"
+        >
+          <div class="bg-white p-4 rounded-xl w-80 space-y-3">
+            <h2 class="font-semibold">Input Hutang Sholat</h2>
+
+            <select x-model="formSholat.nama" class="w-full border p-2 rounded">
+              <option>Subuh</option>
+              <option>Dzuhur</option>
+              <option>Ashar</option>
+              <option>Maghrib</option>
+              <option>Isya</option>
+            </select>
+
+            <input
+              type="date"
+              x-model="formSholat.tanggal"
+              class="w-full border p-2 rounded"
+            />
+
+            <button
+              @click="saveSholat()"
+              class="w-full bg-green-600 text-white p-2 rounded"
+            >
+              Simpan
+            </button>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
 </html>
