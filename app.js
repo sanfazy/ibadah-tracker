@@ -55,9 +55,9 @@ function trackerApp() {
     async apiPost(data) {
       await fetch(API, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
         body: JSON.stringify(data),
       });
     },
@@ -70,6 +70,9 @@ function trackerApp() {
         this.apiGet("puasa"),
       ]);
 
+      console.log("DATA SHOLAT", this.sholat);
+      console.log("DATA PUASA", this.puasa);
+
       this.sholat = sholat;
       this.puasa = puasa;
 
@@ -81,13 +84,17 @@ function trackerApp() {
 
     get sholatBelum() {
       return this.sholat.filter(
-        (i) => !i.tanggal_qodo && i.tahun == this.tahunFilter,
+        (i) =>
+          !String(i.tanggal_qodo).trim() &&
+          Number(i.tahun) === Number(this.tahunFilter),
       );
     },
 
     get puasaBelum() {
       return this.puasa.filter(
-        (i) => !i.tanggal_qodo && i.tahun == this.tahunFilter,
+        (i) =>
+          !String(i.tanggal_qodo).trim() &&
+          Number(i.tahun) === Number(this.tahunFilter),
       );
     },
 
@@ -161,23 +168,33 @@ function trackerApp() {
     /* UTIL */
 
     generateTahun() {
-      let tahun = [
-        ...this.sholat.map((i) => i.tahun),
-        ...this.puasa.map((i) => i.tahun),
-      ];
+      const tahun = [
+        ...this.sholat.map((i) => Number(i.tahun)),
+        ...this.puasa.map((i) => Number(i.tahun)),
+      ].filter((t) => !isNaN(t));
 
-      tahun = [...new Set(tahun)].sort((a, b) => b - a);
+      const list = [...new Set(tahun)].sort((a, b) => b - a);
 
-      this.tahunList = tahun;
+      this.tahunList = list;
 
-      if (!this.tahunFilter) {
-        this.tahunFilter = tahun[0];
+      if (!this.tahunFilter && list.length) {
+        this.tahunFilter = list[0];
       }
     },
 
     hitungStat() {
       this.hutangSholat = this.sholatBelum.length;
       this.hutangPuasa = this.puasaBelum.length;
+    },
+
+    formatTanggal(tanggal) {
+      const d = new Date(tanggal);
+
+      return d.toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "2-digit",
+      });
     },
   };
 }

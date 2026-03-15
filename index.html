@@ -91,7 +91,10 @@
                 <div>
                   <p x-text="item.nama"></p>
 
-                  <p class="text-xs text-gray-400" x-text="item.tanggal"></p>
+                  <p
+                    class="text-xs text-gray-400"
+                    x-text="formatTanggal(item.tanggal)"
+                  ></p>
                 </div>
 
                 <button
@@ -113,7 +116,7 @@
             <template x-for="item in puasaBelum" :key="item.id">
               <li class="flex justify-between items-center">
                 <div>
-                  <p x-text="item.tanggal"></p>
+                  <p x-text="formatTanggal(item.tanggal)"></p>
 
                   <p class="text-xs text-gray-400" x-text="item.nama"></p>
                 </div>
@@ -140,11 +143,18 @@
             :key="item.id"
           >
             <li class="flex justify-between">
-              <span x-text="item.nama"></span>
+              <div>
+                <span x-text="item.nama"></span>
+
+                <p
+                  class="text-xs text-gray-400"
+                  x-text="formatTanggal(item.tanggal)"
+                ></p>
+              </div>
 
               <span
                 class="text-green-600 text-sm"
-                x-text="item.tanggal_qodo"
+                x-text="formatTanggal(item.tanggal_qodo)"
               ></span>
             </li>
           </template>
@@ -233,14 +243,15 @@
             <h2 class="font-semibold">Input Hutang Puasa</h2>
 
             <input
-              type="text"
-              x-model="formPuasa.nama"
+              type="date"
+              x-model="formPuasa.tanggal"
               class="w-full border p-2 rounded"
             />
 
             <input
-              type="date"
-              x-model="formPuasa.tanggal"
+              type="text"
+              placeholder="alasan"
+              x-model="formPuasa.nama"
               class="w-full border p-2 rounded"
             />
 
@@ -281,10 +292,7 @@
               Simpan
             </button>
 
-            <button
-              @click="openModalQodo=false; openMenu=true"
-              class="w-full text-gray-500"
-            >
+            <button @click="openModalQodo=false" class="w-full text-gray-500">
               Batal
             </button>
           </div>
